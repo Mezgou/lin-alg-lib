@@ -5,20 +5,27 @@
 
 class Matrix {
 public:
-    Matrix(const std::vector<std::vector<double>>& input_matrix);
+    explicit Matrix(const std::vector<std::vector<double>>& input_matrix);
     ~Matrix() = default;
 
-    inline std::vector<std::vector<double>> get_matrix() const { return _transform_csr_to_basic(); }
-    inline std::vector<double> get_values() const { return _values; }
-    inline std::vector<uint16_t> get_column_idx() const { return _column_idx; }
-    inline std::vector<uint16_t> get_row_ptr() const { return _row_ptr; }
+    std::vector<std::vector<double>> get_matrix() const { return _transform_csr_to_basic(); }
+    std::vector<double> get_values() const { return _values; }
+    std::vector<uint16_t> get_column_idx() const { return _column_idx; }
+    std::vector<uint16_t> get_row_ptr() const { return _row_ptr; }
+
+    bool is_square_matrix() const { return _isSquareMatrix; }
+
+    double get_trace() const;
+    double get_element(int row, int col) const;
 private:
     void _transform_basic_to_csr(const std::vector<std::vector<double>>& input_matrix);
-    const std::vector<std::vector<double>> _transform_csr_to_basic() const;
+    std::vector<std::vector<double>> _transform_csr_to_basic() const;
 
     std::vector<double> _values;
     std::vector<uint16_t> _column_idx;
     std::vector<uint16_t> _row_ptr;
+
+    bool _isSquareMatrix;
 
     uint16_t _count_rows;
     uint16_t _count_cols;
