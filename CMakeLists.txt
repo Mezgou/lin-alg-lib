@@ -8,6 +8,7 @@ link_libraries(/usr/lib/libcunit.so)
 add_executable(lin-alg-lib 
     src/main.cpp
     src/matrix/matrix.cpp
+    src/matrix/test_matrix.cpp
 )
 
 target_link_libraries(lin-alg-lib PRIVATE cunit)
