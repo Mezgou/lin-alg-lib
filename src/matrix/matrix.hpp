@@ -17,9 +17,16 @@ public:
 
     double get_trace() const;
     double get_element(int row, int col) const;
+    double get_determinant() const;
+
+    Matrix operator*(double scalar);
+    Matrix operator*(const Matrix& other) const;
+    Matrix operator+(const Matrix& other) const;
 private:
     void _transform_basic_to_csr(const std::vector<std::vector<double>>& input_matrix);
     std::vector<std::vector<double>> _transform_csr_to_basic() const;
+
+    double _determinant_recursive(const std::vector<std::vector<double>>& matrix) const;
 
     std::vector<double> _values;
     std::vector<uint16_t> _column_idx;

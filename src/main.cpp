@@ -25,4 +25,18 @@ int main() {
     std::cout << matrix.is_square_matrix() << std::endl;
     std::cout << matrix.get_trace() << std::endl;
     std::cout << matrix.get_element(2, 2) << std::endl;
+    const std::vector<std::vector<double>> other_input_matrix({
+        {1, 0},
+        {0, 1},
+        {4, 5}
+    });
+    const auto other_matrix = Matrix(other_input_matrix);
+    print_matrix(matrix + other_matrix);
+    print_matrix(matrix * other_matrix);
+    double det = matrix.get_determinant();
+    if (det != 0) {
+        std::cout << "The matrix is reversible, the determinant: " << det << std::endl;
+    } else {
+        std::cout << "The matrix is irreversible, the determinant is zero." << std::endl;
+    }
 }
