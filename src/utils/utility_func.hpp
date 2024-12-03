@@ -10,6 +10,8 @@
 #define RED     "\033[31m"
 #define CYAN    "\033[36m"
 
+#define LOG(title, x) std::cout << title << ": " << x << "\n"
+
 static void print_test_result(const CU_pSuite& suite) {
     const unsigned int failures = CU_get_number_of_failures();
     const unsigned int tests = CU_get_number_of_tests_run();
@@ -28,23 +30,47 @@ static void print_test_result(const CU_pSuite& suite) {
 }
 
 template<typename T>
-static void print_vector(const std::vector<T>& input_vector) {
-    std::cout << "PrintVector-----------------\n";
+static void print_vector(const std::vector<T>& input_vector, const std::string& title) {
+    std::string util_string = "--";
+    std::cout << title << util_string << "\n";
     std::cout << "[ ";
     for (const T element : input_vector) {
         std::cout << element << " ";
     }
     std::cout << "]\n";
-    std::cout << "----------------------------\n";
+    const uint16_t count_for_add = title.size();
+    for (uint16_t i = 0; i < count_for_add; i++) {
+        util_string += "-";
+    }
+    std::cout << util_string << "\n";
 }
 
-static void print_matrix(const Matrix& input_matrix) {
-    std::cout << "PrintMatrix-----------------\n";
+static void print_matrix(const Matrix& input_matrix, const std::string& title) {
+    std::string util_string = "--";
+    std::cout << title << util_string << "\n";
     for (const std::vector<double>& row : input_matrix.get_matrix()) {
         for (const double element : row) {
             std::cout << element << " ";
         }
         std::cout << "\n";
     }
-    std::cout << "----------------------------\n";
+    const uint16_t count_for_add = title.size();
+    for (uint16_t i = 0; i < count_for_add; i++) {
+        util_string += "-";
+    }
+    std::cout << util_string << "\n";
+}
+
+static std::vector<std::vector<double>> read_matrix() {
+    uint16_t n, m;
+    std::cout << "Enter the dimensions of the matrix (N and M): ";
+    std::cin >> n >> m;
+    std::vector input_matrix(n, std::vector(m, 0.0));
+    std::cout << "Enter the elements of the matrix (N rows of M elements): ";
+    for (size_t i = 0; i < n; ++i) {
+        for (size_t j = 0; j < m; ++j) {
+            std::cin >> input_matrix[i][j];
+        }
+    }
+    return input_matrix;
 }

@@ -43,7 +43,7 @@ Matrix::Matrix(const std::vector<std::vector<double>>& input_matrix)
 double Matrix::get_trace() const {
     double trace = 0.0;
     if (!_isSquareMatrix) {
-        std::cout << "[LOG] [WARNING] It is not a square matrix!\n";
+        std::cout << "[LOG] [WARNING] It is not a square matrix! ";
         return trace;
     }
     for (uint16_t j = 0; j < _count_rows; j++) {
@@ -160,7 +160,8 @@ Matrix Matrix::operator*(const Matrix &other) const {
     std::vector<std::vector<double>> current_matrix = this->get_matrix();
     const std::vector<std::vector<double>> other_matrix = other.get_matrix();
     if (current_matrix[0].size() != other_matrix.size()) {
-        std::cout << "[LOG] [ERROR] Matrices cannot be multiplied: inconsistent sizes!\n";
+        std::cout << "[LOG] [ERROR] Matrices cannot be multiplied: inconsistent sizes! ";
+        return Matrix({{0}});
     }
     const uint16_t rows = current_matrix.size();
     const uint16_t cols = other_matrix[0].size();
@@ -196,6 +197,10 @@ Matrix Matrix::operator*(const Matrix &other) const {
 Matrix Matrix::operator+(const Matrix &other) const {
     std::vector<std::vector<double>> current_matrix = this->get_matrix();
     const std::vector<std::vector<double>> other_matrix = other.get_matrix();
+    if (current_matrix[0].size() != other_matrix[0].size() || current_matrix.size() != other_matrix.size()) {
+        std::cout << "[LOG] [ERROR] Matrices cannot be addition: inconsistent sizes! ";
+        return Matrix({{0}});
+    }
     for (uint16_t j = 0; j < current_matrix.size(); j++) {
         for (uint16_t i = 0; i < current_matrix[0].size(); i++) {
             current_matrix[j][i] += other_matrix[j][i];

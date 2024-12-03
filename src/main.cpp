@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 
 #include "matrix/matrix.hpp"
 #include "matrix/test_matrix.hpp"
@@ -38,36 +39,43 @@ int main() {
     print_test_result(suite);
     CU_cleanup_registry();
 #endif
-    uint16_t n, m;
-    std::cout << "Enter the dimensions of the matrix (N and M): ";
-    std::cin >> n >> m;
-    std::vector input_matrix(n, std::vector(m, 0.0));
-    std::cout << "Enter the elements of the matrix (N rows of M elements): ";
-    for (size_t i = 0; i < n; ++i) {
-        for (size_t j = 0; j < m; ++j) {
-            std::cin >> input_matrix[i][j];
-        }
-    }
-    const auto matrix = Matrix(input_matrix);
-    print_vector(matrix.get_values());
-    print_vector(matrix.get_column_idx());
-    print_vector(matrix.get_row_ptr());
-    print_matrix(matrix);
-    std::cout << matrix.is_square_matrix() << std::endl;
-    std::cout << matrix.get_trace() << std::endl;
-    std::cout << matrix.get_element(2, 2) << std::endl;
-    const std::vector<std::vector<double>> other_input_matrix({
-        {1, 0},
-        {0, 1},
-        {4, 5}
-    });
-    const auto other_matrix = Matrix(other_input_matrix);
-    print_matrix(matrix + other_matrix);
-    print_matrix(matrix * other_matrix);
-    double det = matrix.get_determinant();
-    if (det != 0) {
-        std::cout << "The matrix is reversible, the determinant: " << det << std::endl;
-    } else {
-        std::cout << "The matrix is irreversible, the determinant is zero." << std::endl;
-    }
+    // Task #1
+    LOG("Task", 1);
+    std::cout << "Entering one matrices for first task:\n";
+    const auto matrix = Matrix(read_matrix());
+    print_vector(matrix.get_values(), "Values");
+    print_vector(matrix.get_column_idx(), "ColumnIndices");
+    print_vector(matrix.get_row_ptr(), "Row pointers");
+    LOG("TraceMatrix", matrix.get_trace());
+    uint16_t i, j;
+    std::cout << "Enter the position of the item you want to receive: ";
+    std::cin >> j >> i;
+    LOG("GetElement", matrix.get_element(j, i));
+
+    // Task #2
+    LOG("Task", 2);
+    std::cout << "Entering two matrices for addition:\n";
+    auto first_matrix = Matrix(read_matrix());
+    auto second_matrix = Matrix(read_matrix());
+    print_matrix(first_matrix + second_matrix, "Addition");
+    std::cout << "Entering one matrices for scalar multiplication:\n";
+    first_matrix = Matrix(read_matrix());
+    double scalar;
+    std::cout << "Enter scalar: ";
+    std::cin >> scalar;
+    print_matrix(first_matrix * scalar, "ScalarMultiplication");
+    std::cout << "Entering two matrices for multiplication:\n";
+    first_matrix = Matrix(read_matrix());
+    second_matrix = Matrix(read_matrix());
+    print_matrix(first_matrix * second_matrix, "MatrixMultiplication");
+
+    // Task #3
+    LOG("Task", 3);
+    std::cout << "Entering one matrices for third task:\n";
+    const auto matrix_for_search_det = Matrix(read_matrix());
+    const double determinant = matrix_for_search_det.get_determinant();
+    constexpr double EPSILON = 1e-9;
+    LOG("Determinant", determinant);
+    const char* result = std::fabs(determinant) < EPSILON ? "no" : "yes";
+    std::cout << "Is there a matrix that is the inverse of this one? " << result << "\n";
 }
