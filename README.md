@@ -1,2 +1,2 @@
 # lin-alg-lib
-Linear Algebra Library
+Linear Algebra Library. Uses the library CUnit for unit tests
