@@ -1,12 +1,15 @@
 #include <iostream>
 #include <cmath>
 
-#include "matrix/matrix.hpp"
-#include "matrix/test_matrix.hpp"
-#include "utils/utility_func.hpp"
+#include "matrix/matrix.h"
+#include "matrix/test_matrix.h"
+#include "utils/utility_func.h"
 
 int main() {
 #ifndef NDEBUG
+#ifdef _WIN32
+    enable_ansi_support();
+#endif
     if (CU_initialize_registry() != CUE_SUCCESS) {
         std::cerr << RED << "Failed to initialize the test registry!" << RESET << std::endl;
         return CU_get_error();

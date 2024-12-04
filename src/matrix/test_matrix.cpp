@@ -1,5 +1,5 @@
-#include "test_matrix.hpp"
-#include "matrix.hpp"
+#include "test_matrix.h"
+#include "matrix.h"
 
 // Тест для конструктора и преобразования в CSR
 void test_constructor_and_csr() {

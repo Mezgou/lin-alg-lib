@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../matrix/matrix.hpp"
+#include "../matrix/matrix.h"
 
 #include <vector>
 #include <iostream>
@@ -11,6 +11,21 @@
 #define CYAN    "\033[36m"
 
 #define LOG(title, x) std::cout << title << ": " << x << "\n"
+
+#ifdef _WIN32
+#include <windows.h>
+
+inline void enable_ansi_support() {
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hOut == INVALID_HANDLE_VALUE) return;
+
+    DWORD dwMode = 0;
+    if (!GetConsoleMode(hOut, &dwMode)) return;
+
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hOut, dwMode);
+}
+#endif
 
 static void print_test_result(const CU_pSuite& suite) {
     const unsigned int failures = CU_get_number_of_failures();

@@ -1,4 +1,4 @@
-#include "matrix.hpp"
+#include "matrix.h"
 
 #include <iostream>
 
@@ -161,7 +161,7 @@ Matrix Matrix::operator*(const Matrix &other) const {
     const std::vector<std::vector<double>> other_matrix = other.get_matrix();
     if (current_matrix[0].size() != other_matrix.size()) {
         std::cout << "[LOG] [ERROR] Matrices cannot be multiplied: inconsistent sizes! ";
-        return Matrix({{0}});
+        return Matrix(std::vector<std::vector<double>>{{0}});
     }
     const uint16_t rows = current_matrix.size();
     const uint16_t cols = other_matrix[0].size();
@@ -199,7 +199,7 @@ Matrix Matrix::operator+(const Matrix &other) const {
     const std::vector<std::vector<double>> other_matrix = other.get_matrix();
     if (current_matrix[0].size() != other_matrix[0].size() || current_matrix.size() != other_matrix.size()) {
         std::cout << "[LOG] [ERROR] Matrices cannot be addition: inconsistent sizes! ";
-        return Matrix({{0}});
+        return Matrix(std::vector<std::vector<double>>{{0}});
     }
     for (uint16_t j = 0; j < current_matrix.size(); j++) {
         for (uint16_t i = 0; i < current_matrix[0].size(); i++) {
