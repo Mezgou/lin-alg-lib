@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.29)
 project(lin-alg-lib)
 
+add_compile_options(-Wno-error)
+
 add_subdirectory(cunit/CUnit)
 
 include_directories(cunit/CUnit)
