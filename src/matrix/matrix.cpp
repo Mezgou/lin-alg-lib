@@ -208,7 +208,7 @@ Matrix Matrix::operator*(const Matrix &other) const {
  */
 Matrix Matrix::operator+(const Matrix &other) const {
     if (this->get_count_rows() != other.get_count_rows() || this->get_count_cols() != other.get_count_cols()) {
-        std::cerr << "[LOG] [ERROR] Matrices cannot be added: inconsistent sizes!" << std::endl;
+        std::cout << "[LOG] [ERROR] Matrices cannot be added: inconsistent sizes!" << std::endl;
         return Matrix(std::vector<std::vector<double>>{{0}});
     }
 
