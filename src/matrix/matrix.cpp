@@ -196,7 +196,7 @@ Matrix Matrix::operator*(const Matrix &other) const {
  * 1. Проверяем, что размеры матриц совпадают (количество строк и столбцов одинаково).
  * 2. Инициализируем временное хранилище для ненулевых элементов результирующей строки.
  * 3. Проходим по строкам обеих матриц.
- *    3.1. Извлекаем ненулевые элементы текущей строки первой матрицы и добавляем их в временное хранилище.
+ *    3.1. Извлекаем ненулевые элементы текущей строки первой матрицы и добавляем их во временное хранилище.
  *    3.2. Извлекаем ненулевые элементы текущей строки второй матрицы и добавляем их в хранилище,
  *         суммируя элементы в совпадающих столбцах.
  * 4. Переносим ненулевые элементы из временного хранилища в результирующую матрицу.
@@ -219,17 +219,14 @@ Matrix Matrix::operator+(const Matrix &other) const {
     for (uint16_t row = 0; row < this->get_count_rows(); ++row) {
         std::unordered_map<uint16_t, double> row_sum;
 
-        // Сложение элементов текущей строки из первой матрицы
         for (uint16_t i = this->get_row_ptr()[row]; i < this->get_row_ptr()[row + 1]; ++i) {
             row_sum[this->get_column_idx()[i]] += this->get_values()[i];
         }
 
-        // Сложение элементов текущей строки из второй матрицы
         for (uint16_t i = other.get_row_ptr()[row]; i < other.get_row_ptr()[row + 1]; ++i) {
             row_sum[other.get_column_idx()[i]] += other.get_values()[i];
         }
 
-        // Добавляем ненулевые элементы в результирующую матрицу
         for (const auto &[col, value] : row_sum) {
             if (value != 0.0) { // Учитываем только ненулевые элементы
                 result_columns.push_back(col);
@@ -237,7 +234,6 @@ Matrix Matrix::operator+(const Matrix &other) const {
             }
         }
 
-        // Обновляем row_offsets
         result_row_offsets.push_back(result_columns.size());
     }
     return Matrix(result_values, result_columns, result_row_offsets,
