@@ -1,6 +1,7 @@
 #include "matrix.h"
 
 #include <iostream>
+#include <unordered_map>
 
 /**
  * @brief Конструктор матрицы. Преобразует базовый формат матрицы в CSR-формат.
@@ -22,6 +23,11 @@ Matrix::Matrix(const std::vector<std::vector<double>>& input_matrix)
     : _isSquareMatrix(input_matrix.size() == input_matrix[0].size()), _count_rows(input_matrix.size()),
         _count_cols(input_matrix[0].size()) {
     _transform_basic_to_csr(input_matrix);
+}
+
+Matrix::Matrix(const std::vector<double> &values, const std::vector<uint16_t> &column_idx, const std::vector<uint16_t> &row_ptr, bool isSquareMatrix, uint16_t rows, uint16_t cols)
+    : _values(values), _column_idx(column_idx), _row_ptr(row_ptr), _isSquareMatrix(isSquareMatrix),
+    _count_rows(rows), _count_cols(cols) {
 }
 
 /**
@@ -178,35 +184,64 @@ Matrix Matrix::operator*(const Matrix &other) const {
 }
 
 /**
- * @brief Складывает текущую матрицу с другой матрицей.
+ * @brief Складывает текущую матрицу с другой матрицей в формате CSR.
  *
  * Математический принцип:
- * Сложение матриц выполняется поэлементно, если размерности матриц совпадают.
+ * Сложение матриц выполняется поэлементно. Элементы, находящиеся в одном и том же
+ * столбце и строке, суммируются. Ненулевые элементы сохраняются в результирующей матрице.
  * Формула для элемента:
- * C[i][j] = A[i][j] + B[i][j]
+ * C[i][j] = A[i][j] + B[i][j], если i, j принадлежат ненулевым элементам A или B.
  *
  * Алгоритм:
- * 1. Проверяем, что размеры матриц совпадают.
- * 2. Извлекаем текущую матрицу и другую матрицу в базовом формате.
- * 3. Итерируемся по каждому элементу матриц и складываем их.
- * 4. Возвращаем новую матрицу.
+ * 1. Проверяем, что размеры матриц совпадают (количество строк и столбцов одинаково).
+ * 2. Инициализируем временное хранилище для ненулевых элементов результирующей строки.
+ * 3. Проходим по строкам обеих матриц.
+ *    3.1. Извлекаем ненулевые элементы текущей строки первой матрицы и добавляем их в временное хранилище.
+ *    3.2. Извлекаем ненулевые элементы текущей строки второй матрицы и добавляем их в хранилище,
+ *         суммируя элементы в совпадающих столбцах.
+ * 4. Переносим ненулевые элементы из временного хранилища в результирующую матрицу.
+ * 5. Формируем новый массив смещений строк для результирующей матрицы.
+ * 6. Возвращаем новую матрицу в формате CSR.
  *
  * @param other Матрица, с которой производится сложение.
- * @return Результат сложения матриц.
+ * @return Результат сложения матриц в формате CSR.
  */
 Matrix Matrix::operator+(const Matrix &other) const {
-    std::vector<std::vector<double>> current_matrix = this->get_matrix();
-    const std::vector<std::vector<double>> other_matrix = other.get_matrix();
-    if (current_matrix[0].size() != other_matrix[0].size() || current_matrix.size() != other_matrix.size()) {
-        std::cout << "[LOG] [ERROR] Matrices cannot be addition: inconsistent sizes! ";
+    if (this->get_count_rows() != other.get_count_rows() || this->get_count_cols() != other.get_count_cols()) {
+        std::cerr << "[LOG] [ERROR] Matrices cannot be added: inconsistent sizes!" << std::endl;
         return Matrix(std::vector<std::vector<double>>{{0}});
     }
-    for (uint16_t j = 0; j < current_matrix.size(); j++) {
-        for (uint16_t i = 0; i < current_matrix[0].size(); i++) {
-            current_matrix[j][i] += other_matrix[j][i];
+
+    std::vector<double> result_values;
+    std::vector<uint16_t> result_columns;
+    std::vector<uint16_t> result_row_offsets = {0};
+
+    for (uint16_t row = 0; row < this->get_count_rows(); ++row) {
+        std::unordered_map<uint16_t, double> row_sum;
+
+        // Сложение элементов текущей строки из первой матрицы
+        for (uint16_t i = this->get_row_ptr()[row]; i < this->get_row_ptr()[row + 1]; ++i) {
+            row_sum[this->get_column_idx()[i]] += this->get_values()[i];
         }
+
+        // Сложение элементов текущей строки из второй матрицы
+        for (uint16_t i = other.get_row_ptr()[row]; i < other.get_row_ptr()[row + 1]; ++i) {
+            row_sum[other.get_column_idx()[i]] += other.get_values()[i];
+        }
+
+        // Добавляем ненулевые элементы в результирующую матрицу
+        for (const auto &[col, value] : row_sum) {
+            if (value != 0.0) { // Учитываем только ненулевые элементы
+                result_columns.push_back(col);
+                result_values.push_back(value);
+            }
+        }
+
+        // Обновляем row_offsets
+        result_row_offsets.push_back(result_columns.size());
     }
-    return Matrix(current_matrix);
+    return Matrix(result_values, result_columns, result_row_offsets,
+        this->get_count_rows() == this->get_count_cols(), this->get_count_rows(), this->get_count_cols());
 }
 
 /**
@@ -289,7 +324,7 @@ std::vector<std::vector<double>> Matrix::_transform_csr_to_basic() const {
  * @param matrix Матрица, для которой нужно вычислить определитель.
  * @return Определитель матрицы.
  */
-double Matrix::_determinant_recursive(const std::vector<std::vector<double>>& matrix) const {
+double Matrix::_determinant_recursive(const std::vector<std::vector<double>>& matrix) {
     uint16_t n = matrix.size();
     if (n == 1) {
         return matrix[0][0];
