@@ -5,7 +5,7 @@ add_compile_options(-Wno-error)
 
 add_subdirectory(cunit/CUnit)
 
-include_directories(cunit/CUnit)
+include_directories(cunit/CUnit src src/matrix src/utils)
 
 add_executable(lin-alg-lib 
     src/main.cpp

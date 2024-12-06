@@ -1,9 +1,9 @@
 #include <iostream>
 #include <cmath>
 
-#include "matrix/matrix.h"
-#include "matrix/test_matrix.h"
-#include "utils/utility_func.h"
+#include "matrix.h"
+#include "test_matrix.h"
+#include "utility_func.h"
 
 int main() {
 #ifndef NDEBUG
